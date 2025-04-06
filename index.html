@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Tienes una carta</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body, html {
+      height: 100%;
+      font-family: 'Press Start 2P', monospace;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      overflow: hidden;
+      color: white;
+    }
+    .pantalla {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5em;
+      padding: 1rem;
+      text-align: center;
+    }
+    .oculto {
+      display: none;
+    }
+    .boton {
+      padding: 0.7em 1.4em;
+      background: #e3e3e3;
+      border: 4px solid #000;
+      box-shadow: 4px 4px 0 #333;
+      font-size: 0.8rem;
+      cursor: pointer;
+      min-width: 160px;
+      max-width: 200px;
+      color: black;
+      text-align: center;
+    }
+    .boton:hover {
+      transform: scale(1.05);
+    }
+    .btn-arriba-derecha {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
+    .cuadro-carga {
+      width: 90vw;
+      max-width: 400px;
+      border: 3px solid #111;
+      background: rgba(0, 0, 0, 0.6);
+      box-shadow: 4px 4px 0 #555;
+    }
+    .cuadro-header {
+      background: rgba(255, 255, 255, 0.85);
+      padding: 0.5em;
+      text-align: center;
+      border-bottom: 2px solid #aaa;
+      font-size: 0.9rem;
+      color: black;
+    }
+    .cuadro-body {
+      background: transparent;
+      color: white;
+      padding: 1em;
+    }
+    .cuadro-texto {
+      margin-bottom: 1em;
+      font-size: 0.8rem;
+    }
+    .barra-carga {
+      height: 20px;
+      width: 100%;
+      background: #111;
+      border: 2px solid #000;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+    .barra-progreso {
+      height: 100%;
+      background-image: repeating-linear-gradient(
+        90deg,
+        #b6ff7d 0,
+        #b6ff7d 8px,
+        #6ea64f 8px,
+        #6ea64f 16px
+      );
+      box-shadow: inset 0 0 2px #000;
+      animation: moverFondo 1s linear infinite;
+    }
+    @keyframes moverFondo {
+      0% { background-position: 0 0; }
+      100% { background-position: 16px 0; }
+    }
+    .mensaje-final {
+      font-size: 0.85rem;
+      background: rgba(0, 0, 0, 0.85);
+      padding: 1.5rem;
+      border-radius: 10px;
+      max-width: 90%;
+      line-height: 1.6;
+      box-shadow: 0 0 10px rgba(0,0,0,0.7);
+    }
+    img {
+      max-width: 90%;
+      height: auto;
+    }
+  </style>
+</head>
+<body id="body" style="background-image: url('fondoprincipal.jpg')">
+  <audio id="musicaFondo" src="musica-minecraft.mp3" loop autoplay></audio> <!-- No lo tengo -->
+  <audio id="sonidoFinal" src="celebracion.mp3"></audio> <!-- No lo tengo, ya fue subir así -->
+
+  <!-- Pantalla Principal -->
+  <div id="pantalla-inicio" class="pantalla">
+    <img src="tienesunacarta.png" alt="Tienes una carta">
+    <button class="boton" onclick="empezarPropuesta()">Abrir</button>
+  </div>
+
+  <!-- Cuadro 1 -->
+  <div id="pantalla-cuadro1" class="pantalla oculto">
+    <div class="cuadro-carga">
+      <div class="cuadro-header">Cargando</div>
+      <div class="cuadro-body">
+        <p class="cuadro-texto">Te amo, ¿tú me amas?</p>
+        <div class="barra-carga">
+          <div class="barra-progreso" style="width: 25%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro 2 -->
+  <div id="pantalla-cuadro2" class="pantalla oculto">
+    <div class="cuadro-carga">
+      <div class="cuadro-header">Cargando</div>
+      <div class="cuadro-body">
+        <p class="cuadro-texto">Espera, aún no envío la propuesta</p>
+        <div class="barra-carga">
+          <div class="barra-progreso" style="width: 50%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro 3 + botones -->
+  <div id="pantalla-final" class="pantalla oculto">
+    <div class="cuadro-carga">
+      <div class="cuadro-header">Cargando</div>
+      <div class="cuadro-body">
+        <p class="cuadro-texto">¿Quieres ir a ver la película de Minecraft conmigo?</p>
+        <div class="barra-carga">
+          <div class="barra-progreso" style="width: 75%;"></div>
+        </div>
+      </div>
+    </div>
+    <button class="boton" onclick="aceptarPropuesta()">Sí</button>
+    <button class="boton" onclick="rechazarPropuesta()">No</button>
+  </div>
+
+  <!-- Pantalla Respuesta -->
+  <div id="pantalla-respuesta" class="pantalla oculto">
+    <div class="mensaje-final">
+      Gracias por acompañarme siempre, cada aventura a tu lado es maravillosa.<br><br>
+      Te amo Step ❤️‍🔥
+    </div>
+    <button class="boton btn-arriba-derecha" onclick="volverInicio()">Inicio</button>
+  </div>
+
+  <script>
+    function empezarPropuesta() {
+      document.getElementById("pantalla-inicio").classList.add("oculto");
+      document.getElementById("pantalla-cuadro1").classList.remove("oculto");
+
+      setTimeout(() => {
+        document.getElementById("pantalla-cuadro1").classList.add("oculto");
+        document.getElementById("pantalla-cuadro2").classList.remove("oculto");
+
+        setTimeout(() => {
+          document.getElementById("pantalla-cuadro2").classList.add("oculto");
+          document.getElementById("pantalla-final").classList.remove("oculto");
+        }, 6000);
+      }, 6000);
+    }
+
+    function aceptarPropuesta() {
+      document.getElementById("pantalla-final").classList.add("oculto");
+      document.getElementById("pantalla-respuesta").classList.remove("oculto");
+      document.getElementById("body").style.backgroundImage = "url('fondodelfinal.jpg')";
+      document.getElementById("sonidoFinal").play();
+    }
+
+    function rechazarPropuesta() {
+      volverInicio();
+    }
+
+    function volverInicio() {
+      document.getElementById("pantalla-respuesta").classList.add("oculto");
+      document.getElementById("pantalla-final").classList.add("oculto");
+      document.getElementById("pantalla-cuadro2").classList.add("oculto");
+      document.getElementById("pantalla-cuadro1").classList.add("oculto");
+      document.getElementById("pantalla-inicio").classList.remove("oculto");
+      document.getElementById("body").style.backgroundImage = "url('fondoprincipal.jpg')";
+    }
+  </script>
+</body>
+</html>
